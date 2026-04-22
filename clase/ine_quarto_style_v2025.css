@@ -1,0 +1,138 @@
+.reveal section.portada{
+  background-image: url("imagenes/background.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  height: 100%;
+  container-type: size;            /* habilita cqh/cqw */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 20cqh 0cqw 0;            /* margen superior pequeño */
+  gap: 2cqh;                       /* separación entre logo y textos */
+  text-align: center;
+  overflow: hidden;
+
+  /* Tamaño FIJO del área del logo (ajústalo si quieres) */
+  --logo-h: 7cqh;                 /* alto fijo del área del logo */
+  --logo-w: 20cqw;                 /* ancho fijo del área del logo */
+}
+
+/* Área del logo: fija; no crece ni se encoge */
+.reveal section.portada .logo-box{
+  display: grid;
+  block-size: var(--logo-h);
+  inline-size: var(--logo-w);
+  flex: 0 0 auto;
+  place-items: center;
+  margin-inline: auto;
+}
+
+/* El logo se contiene en su caja SIN deformarse */
+.reveal section.portada .logo-box > img.portada-logo{
+  
+  width: 60% !important;
+  height: auto !important;
+  object-fit: contain;
+  object-position: center;
+}
+
+/* Área de texto: ocupa todo el espacio restante debajo del logo */
+.reveal section.portada .title-area{
+  flex: 1 1 auto;                  /* toma el resto del alto disponible */
+  max-inline-size: 90cqw;
+  display: grid;
+  align-content: start;            /* texto arranca arriba del área */
+  justify-items: center;
+  gap: 1.2cqh;
+  overflow: hidden;                /* evita desbordes visuales */
+  margin-inline: auto;
+  margin-top: 37.5cqh;
+}
+
+/* Tipografías: adaptativas, sin márgenes verticales extra */
+.reveal section.portada .title-area h1{
+  font-size: clamp(3cqh, 5.5cqh, 7cqh);
+  line-height: 1.1;
+  margin: 0;
+  color: #fff;
+  text-wrap: balance;
+}
+.reveal section.portada .title-area h2{
+  font-size: clamp(2.2cqh, 3.6cqh, 5cqh);
+  line-height: 1.15;
+  margin: 0;
+  color: #fff;
+  text-wrap: balance;
+}
+.reveal section.portada .title-area p{
+  font-size: clamp(1.6cqh, 2.4cqh, 3.2cqh);
+  margin: 0;
+  color: #fff;
+}
+
+.reveal section.tipo1{
+  background-image: url("imagenes/bg3.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  
+  height: 100%;
+  container-type: size;            /* habilita cqh/cqw */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  
+  /* usa padding-block-start como “perilla” */
+  padding-block-start: 4cqh;
+  --title-shift: 14cqh;
+  gap: 2cqh;
+  overflow: hidden;
+}
+
+/* Área de texto: ocupa todo el espacio restante debajo del logo */
+.reveal section.tipo1 .title-area{
+  flex: 1 1 auto;                  /* toma el resto del alto disponible */
+  transform: translateY(var(--title-shift));
+  max-inline-size: 90cqw;
+  display: grid;
+  align-content: start;            /* texto arranca arriba del área */
+  justify-items: center;
+  gap: 1.2cqh;
+  overflow: hidden;                /* evita desbordes visuales */
+  margin-inline: auto;
+  margin-block-start: 0;   /* ← importante: que no sume con el padding */
+}
+
+/* el espaciador */
+.reveal section.tipo1 .title-area::before{
+  content: "";
+  inline-size: 100%;
+  block-size: var(--title-offset, 0); /* ← controla el espacio arriba del texto */
+}
+
+/* Tipografías: adaptativas, sin márgenes verticales extra */
+.reveal section.tipo1 .title-area h1{
+  font-size: clamp(3cqh, 5.5cqh, 7cqh);
+  line-height: 1.1;
+  margin: 0;
+  color: #fff;
+  text-wrap: balance;
+}
+.reveal section.tipo1 .title-area h2{
+  font-size: clamp(2.2cqh, 3.6cqh, 5cqh);
+  line-height: 1.15;
+  margin: 0;
+  color: #fff;
+  text-wrap: balance;
+}
+.reveal section.tipo1 .title-area p{
+  font-size: clamp(1.6cqh, 2.4cqh, 3.2cqh);
+  margin: 0;
+  color: #fff;
+}
+
+
+
+
+
