@@ -485,6 +485,16 @@ resultados %>% arrange(desc(f1))
 **Estos principios aplican para cualquier estrategia de aprendizaje supervisado**
 
 
+## Ejercicio propuesto
+
+El modelo de machine learning preparado para este ejemplo no tiene el desempeño esperado para ser de utilidad. Realiza las siguientes tareas:
+
+- Mejora el modelo con la información disponible de la EPF. Recuerda que solo debes usar variables que luego tendrás disponible "en producción".
+- Haz predicciones en datos de la ESI o CASEN y evalúa el resultado 
+
+
+
+
 ##  {#cierre .portada}
 
 ::: logo-box
