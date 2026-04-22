@@ -96,13 +96,57 @@ Necesitamos predictores que tengan una mayor periodicidad que la EPF
 
 ## Paso 0: estructurar dataset
 
-Trabajaremos con datos de la IX EPF
+Variables de ambiente
 
 ```{r}
-# Cargar datos
+library(dotenv)
+library(aws.s3)
 library(tidyverse)
-gastos = read_csv2("data/base-gastos-ix-epf-(formato-csv).csv")
-personas = read_csv2("data/base-personas-ix-epf-(formato-csv).csv")
+
+load_dot_env(".env")
+access_key <- Sys.getenv("ACCESS_KEY")
+secret_key <- Sys.getenv("SECRET_KEY")
+
+Sys.setenv(
+  "AWS_ACCESS_KEY_ID" = Sys.getenv("ACCESS_KEY"),
+  "AWS_SECRET_ACCESS_KEY" = Sys.getenv("SECRET_KEY"),
+  "AWS_S3_ENDPOINT" = Sys.getenv("AWS_S3_ENDPOINT")
+)
+
+
+```
+
+## Paso 0: estructurar dataset
+
+Leer datos de la EPF
+
+```{r}
+bucket_name <- "desarrollo"
+object <- "ooee/clases_ia/datos/data/base-gastos-ix-epf-(formato-csv).csv"
+
+# Se lee en formato binario 
+raw_obj  <- aws.s3::get_object(object = object, 
+                               bucket = bucket_name,
+                               use_https = TRUE, 
+                               region=""  )
+
+gastos <- readr::read_csv2(I(rawToChar(raw_obj))) 
+
+object <- "ooee/clases_ia/datos/data/base-personas-ix-epf-(formato-csv).csv"
+
+# Se lee en formato binario 
+raw_obj  <- aws.s3::get_object(object = object, 
+                               bucket = bucket_name,
+                               use_https = TRUE, 
+                               region=""  )
+
+personas <- readr::read_csv2(I(rawToChar(raw_obj))) 
+
+```
+
+## Paso 0: estructurar dataset
+
+```{r}
 
 # Variables predictoras del sustentador principal
 hogar_x = personas %>%
@@ -137,8 +181,6 @@ bencina <- gastos %>%
   filter(ccif == "07.2.2.02.01" ) %>% # bencina
   mutate(bencina = 1) %>% 
   select(folio, bencina) 
-  
-
   
 
 
