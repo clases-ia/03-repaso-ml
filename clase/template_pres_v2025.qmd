@@ -558,7 +558,9 @@ El modelo de machine learning preparado para este ejemplo no tiene el desempeño
 ::: title-area
 <h1>Conceptos básicos de machine learning</h1>
 
-<h2>Unidad de Gobierno de Datos - Área de Ciencia de datos</h2>
+<h2>Área de Ciencia de Datos</h2>
+
+<h2>Unidad de Gobierno de Datos</h2>
 
 <p><strong>Abril 2026</strong></p>
 :::
