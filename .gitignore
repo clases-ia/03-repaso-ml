@@ -2,3 +2,6 @@
 /data
 /src
 .env
+/clase/.env
+.Rproj.user/
+03-repaso-ml.Rproj

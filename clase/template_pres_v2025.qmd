@@ -98,15 +98,19 @@ Necesitamos predictores que tengan una mayor periodicidad que la EPF
 
 Variables de ambiente
 
-```{r}
+```{r variables ambiente}
+
+# Quiero que esto corra solo en jupyterhub
+if (dir.exists("/home/jovyan/work/R/libs")) {
+  .libPaths(c("/home/jovyan/work/R/libs", .libPaths()))   
+}
+
 library(dotenv)
 library(aws.s3)
 library(tidyverse)
+library(here)
 
-load_dot_env(".env")
-access_key <- Sys.getenv("ACCESS_KEY")
-secret_key <- Sys.getenv("SECRET_KEY")
-
+load_dot_env(here(".env"))
 Sys.setenv(
   "AWS_ACCESS_KEY_ID" = Sys.getenv("ACCESS_KEY"),
   "AWS_SECRET_ACCESS_KEY" = Sys.getenv("SECRET_KEY"),
@@ -120,9 +124,11 @@ Sys.setenv(
 
 Leer datos de la EPF
 
-```{r}
+```{r cargar datos desde Minio}
 bucket_name <- "desarrollo"
 object <- "ooee/clases_ia/datos/data/base-gastos-ix-epf-(formato-csv).csv"
+
+#install.packages("rsample", lib="/home/jovyan/work/R/libs")
 
 # Se lee en formato binario 
 raw_obj  <- aws.s3::get_object(object = object, 
@@ -146,7 +152,7 @@ personas <- readr::read_csv2(I(rawToChar(raw_obj)))
 
 ## Paso 0: estructurar dataset
 
-```{r}
+```{r seleccionar columnas}
 
 # Variables predictoras del sustentador principal
 hogar_x = personas %>%
@@ -161,7 +167,7 @@ hogar_x = personas %>%
 
 Escogemos algunos productos
 
-```{r}
+```{r seleccionar productos}
 quinoa <- gastos %>%
   filter(ccif == "01.1.1.01.03" ) %>% # quinoea
   mutate(quinoa = 1) %>% 
@@ -190,7 +196,7 @@ bencina <- gastos %>%
 
 ### Haremos el ejemplo con bencina
 
-```{r}
+```{r unir productos}
 
 SELECTED_Y = "bencina"
 
@@ -214,7 +220,7 @@ full <- hogar_x %>%
 
 <br/>
 
-```{r}
+```{r preparar matriz}
 # El código que viene es para crear la que le pasaremos al clasificador
 vars_cat <- c("macrozona", "cine_a", "sexo", "cae", "quintil")
 vars_num <- c("npersonas", "edad")
@@ -229,7 +235,7 @@ full_final <- full %>%
 
 ## Paso 0: revisemos el dataset
 
-```{r}
+```{r mostrar datos}
 library(DT)
 datatable(
   full_final,
@@ -240,7 +246,7 @@ datatable(
 
 ## Paso 0.1: revisar si nuestras covariables tienen sentido
 
-```{r}
+```{r función auxiliar}
 # Función para crear tablas
 create_table <- function(df, var, x_var) {
   table <- df %>% 
@@ -261,14 +267,14 @@ create_table <- function(df, var, x_var) {
 
 Revisamos si existe alguna relación entre ingreso y consumo de bencina
 
-```{r}
+```{r mostrar quintil}
 create_table(full, "bencina", "quintil")
 
 ```
 
 ## Paso 0.1: revisar si nuestras covariables tienen sentido
 
-```{r}
+```{r correlaciones}
 create_table(full, "bencina", "cae")
 create_table(full, "bencina", "macrozona")
 create_table(full, "bencina", "cine_a")
@@ -284,8 +290,9 @@ create_table(full, "bencina", "sexo")
 
 ## Paso 1: separar entre test y train
 
-```{r}
-#install.packages("rsample") por si no la tienen
+```{r separar train test}
+#install.packages("rsample", lib="/home/jovyan/work/R/libs") por si no la tienen
+
 library(rsample)
 set.seed(123)
 split <- initial_split(full_final, prop = 0.8)
@@ -326,8 +333,8 @@ Documentación completa [aquí](https://xgboost.readthedocs.io/en/release_3.2.0/
 ## Paso 2: entrenamos
 
 
-```{r}
-# install.packages("xgboost") por si no lo tienen instalado
+```{r xgboost}
+#install.packages("xgboost", lib="/home/jovyan/work/R/libs") por si no lo tienen instalado
 library(xgboost)
 
 X_train <- train %>% 
@@ -369,7 +376,7 @@ modelo <- xgb.train(
 
 ## Paso 3: testeamos
 
-```{r}
+```{r importancia variables}
 importancia <- xgb.importance(model = modelo)
 xgb.plot.importance(importancia, top_n = 5)
 ```
@@ -378,7 +385,7 @@ xgb.plot.importance(importancia, top_n = 5)
 
 Construiremos una matriz de confusión
 
-```{r}
+```{r matriz confusión}
 # Probabilidad predicha de comprar salmón
 pred_prob <- predict(modelo, dtest)
 
@@ -399,7 +406,7 @@ Dos métricas muy utilizadas para evaluar desempeño:
 - Accuracy
 - F1 score
 
-```{r}
+```{r métricas ejemplo}
 tp <- cm[2, 2]
 fp <- cm[1, 2]
 fn <- cm[2, 1]
@@ -503,8 +510,13 @@ resultados <- purrr::map_dfr(seq_len(nrow(grilla)), function(i) {
     acc       = round(sum(diag(cm_i)) / sum(cm_i), 3)
   )
 })
+```
 
-resultados %>% arrange(desc(f1))
+. . .
+ 
+```{r}
+resultados %>%
+  arrange(desc(f1))
 ```
 
 ## Dejamos fuera varios elementos
@@ -544,9 +556,9 @@ El modelo de machine learning preparado para este ejemplo no tiene el desempeño
 :::
 
 ::: title-area
-<h1>Título</h1>
+<h1>Conceptos básicos de machine learning</h1>
 
-<h2>Unidad de Gobierno de Datos</h2>
+<h2>Unidad de Gobierno de Datos - Área de Ciencia de datos</h2>
 
-<p><strong>Fecha</strong></p>
+<p><strong>Abril 2026</strong></p>
 :::
